@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM-CanarIAgentic</title>
+    <meta name="description" content="Sistema CRM moderno y sencillo para la gestión de clientes.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Vista de Autenticación -->
+    <div id="auth-view" class="view hidden">
+        <div class="auth-card">
+            <h1 id="auth-title">CRM-CanarIAgentic</h1>
+            <p id="auth-desc">Por favor, introduce tu contraseña para continuar.</p>
+            <form id="auth-form">
+                <div class="form-group">
+                    <input type="password" id="auth-pass" placeholder="Contraseña" required>
+                </div>
+                <div id="auth-setup-group" class="form-group hidden">
+                    <input type="password" id="auth-pass-confirm" placeholder="Confirmar Contraseña">
+                </div>
+                <button type="submit" id="auth-btn">Entrar</button>
+            </form>
+            <p id="auth-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <!-- Vista Principal del CRM -->
+    <div id="crm-view" class="view hidden">
+        <header class="main-header">
+            <div class="header-content">
+                <h1>CanarIAgentic <span class="badge">CRM</span></h1>
+                <div class="header-actions">
+                    <button id="change-pass-btn" class="btn-text">Cambiar Contraseña</button>
+                    <button id="logout-btn" class="btn-outline">Cerrar Sesión</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- Contadores -->
+            <section class="stats-grid">
+                <div class="stat-card" data-status="total">
+                    <span class="stat-label">Total</span>
+                    <span class="stat-value" id="count-total">0</span>
+                </div>
+                <div class="stat-card" data-status="Nuevo">
+                    <span class="stat-label">Nuevos</span>
+                    <span class="stat-value" id="count-nuevo">0</span>
+                </div>
+                <div class="stat-card" data-status="Contactado">
+                    <span class="stat-label">Contactados</span>
+                    <span class="stat-value" id="count-contactado">0</span>
+                </div>
+                <div class="stat-card" data-status="Propuesta">
+                    <span class="stat-label">Propuesta</span>
+                    <span class="stat-value" id="count-propuesta">0</span>
+                </div>
+                <div class="stat-card" data-status="Cerrado">
+                    <span class="stat-label">Cerrados</span>
+                    <span class="stat-value" id="count-cerrado">0</span>
+                </div>
+            </section>
+
+            <!-- Controles y Filtros -->
+            <section class="controls-bar">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Buscar por nombre o empresa...">
+                </div>
+                <div class="filter-box">
+                    <select id="filter-status">
+                        <option value="all">Todos los estados</option>
+                        <option value="Nuevo">Nuevo</option>
+                        <option value="Contactado">Contactado</option>
+                        <option value="Propuesta">Propuesta</option>
+                        <option value="Cerrado">Cerrado</option>
+                        <option value="Perdido">Perdido</option>
+                    </select>
+                </div>
+                <button id="add-client-btn" class="btn-primary">Añadir Cliente</button>
+                <div class="data-actions">
+                    <button id="export-btn" class="btn-secondary">Exportar JSON</button>
+                    <label for="import-input" class="btn-secondary">Importar JSON</label>
+                    <input type="file" id="import-input" accept=".json" class="hidden">
+                </div>
+            </section>
+
+            <!-- Lista de Clientes (Tablero Kanban opcional pero lista flexible) -->
+            <section id="clients-list" class="clients-grid">
+                <!-- Se poblará dinámicamente -->
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Añadir/Editar Cliente -->
+    <div id="client-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modal-title">Añadir Nuevo Cliente</h2>
+            <form id="client-form">
+                <input type="hidden" id="client-id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="client-name">Nombre *</label>
+                        <input type="text" id="client-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="client-email">Email</label>
+                        <input type="email" id="client-email">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-whatsapp">WhatsApp</label>
+                        <input type="tel" id="client-whatsapp">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-company">Empresa</label>
+                        <input type="text" id="client-company">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="client-status">Estado *</label>
+                        <select id="client-status" required>
+                            <option value="Nuevo">Nuevo</option>
+                            <option value="Contactado">Contactado</option>
+                            <option value="Propuesta">Propuesta</option>
+                            <option value="Cerrado">Cerrado</option>
+                            <option value="Perdido">Perdido</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="client-notes">Notas</label>
+                        <textarea id="client-notes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="cancel-modal" class="btn-outline">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Cambiar Contraseña -->
+    <div id="password-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Cambiar Contraseña</h2>
+            <form id="password-form">
+                <div class="form-group">
+                    <label for="old-pass">Contraseña Actual</label>
+                    <input type="password" id="old-pass" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-pass">Nueva Contraseña</label>
+                    <input type="password" id="new-pass" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="cancel-pass-modal" class="btn-outline">Cancelar</button>
+                    <button type="submit" class="btn-primary">Actualizar Contraseña</button>
+                </div>
+            </form>
+            <p id="pass-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
